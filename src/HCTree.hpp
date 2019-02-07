@@ -36,6 +36,18 @@ private:
      */
     void printTreeHelper(HCNode * node, string indent = "") const;
 
+    void deleteAll(HCNode * n){
+	if(!n){
+	    return; 
+	}
+	deleteAll(n->left);
+	deleteAll(n->right);
+    
+	delete n;
+	return;
+	}
+    }
+
 public:
     /** Constructor for HCTree
      */

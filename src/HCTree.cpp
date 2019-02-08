@@ -1,4 +1,4 @@
-#include <stack>
+include <stack>
 #include <queue>
 
 #include "HCTree.hpp"
@@ -27,49 +27,45 @@ void HCTree::build(const vector<int>& freqs) {
     /* intialize leaves in priority queue */
     for(int i = 0; i < freq.size() ; i++ ){
 	if(freqs[i] != 0){
-	    leaves[i]->count = freqs[i];
-	    pq.push(leaves[i]);
+
+	    /* makes new node, fills data, pushes on queue */
+	    HCNode* node = new HCNode(freqs[i], i);
+	    leaves[i] = node; 
+	    pq.push(node);
 	}
     } 
 
     HCNode* add1;
     HCNode* add2;
-    NCNode* parental;
     int sum = 0;
+
     /* loop to create tree */
-    while(pq.size() > 0){
-
-	if(pq.size() == 1){
-	    parental = pq.top();
-	    break; 
-	}
-
-	add1 = pq.top();
+    while(pq.size() > 1){
+	
+        add1 = pq.top();
 	pq.pop();
 	add2 = pq.top();
 	pq.pop();
 	
+	HCNode * parental;
+
 	/* sum of 2 node counts */
 	sum = add1->count + add2->count; 
-	parental->count = sum; 
+	if(add1->symbol < add2->symbol){
+            parental = new HCNode(sum, add2->symbol, add1, add2);
+	}
+	else{
+            parental = new HCNode(sum, add1->symbol, add1, add2);
+	}	
 	
 	/* attach nodes to parent and parent's children*/
-	parental->c0 = add1;
-	parental->c1 = add2; 
 	add1->parent = parental;
 	add2->parent = parental; 
 	
-	/* sets symbol to be larger sym */
-	parental->symbol = add2->symbol;
-
 	pq.push(parental);
-	
-
-
-		
-
-
     }
+
+    root = pq.top();
 
 }
 

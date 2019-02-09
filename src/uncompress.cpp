@@ -23,7 +23,41 @@ void print_usage(char ** argv) {
  * For debugging purposes, uses ASCII '0' and '1' rather than bitwise I/O.
  */
 void uncompressAscii(const string & infile, const string & outfile) {
-    // TODO (checkpoint)
+    ifstream theFile;
+    unsigned char nextChar; 
+    theFile.open(infile);
+
+    /* holds all counts of symbols to pass in for build */
+    vector<int> freqs (256, 0);
+
+    int x = 0;
+    int add; 
+    /* loops for each of the 256 ascii chars in the header */
+    while(x < 256){
+	//CHECK -- getting int value not a char //
+        add = theFile.get(); 
+        freqs[x] = add;	    
+	x++;
+    }
+  
+    /* build huffman tree from header info */
+    build(freqs);
+
+    /* opens output file */
+    ofstream numFile;
+    numFile.open(outfile);
+
+    int nextByte;
+    /* loop for the line that contains bits to uncompress */
+    while((nextByte = theFile.get()) != EOF){
+	/* adds symbol to output file */
+        numFile << decode(theFile);
+        
+    }
+
+    theFile.close();
+    numFile.close();
+
     cerr << "TODO: uncompress '" << infile << "' -> '"
         << outfile << "' here (ASCII)" << endl;
 }

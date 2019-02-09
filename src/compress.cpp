@@ -22,7 +22,47 @@ void print_usage(char ** argv) {
  * For debugging purposes, uses ASCII '0' and '1' rather than bitwise I/O.
  */
 void compressAscii(const string & infile, const string & outfile) {
-    // TODO (checkpoint)
+    
+    ifstream theFile;
+    unsigned char nextChar;
+    theFile.open(infile);
+    
+    vector<int> freqs (256, 0);
+
+    /* gets freq of symbols in file in vector */
+    while(1){
+	theFile >> nextChar; 
+        if(theFile.eof()) break;
+	/* increments index of symbol that was read */
+	freq[nextChar]++;
+    }
+    
+    /* build huffman tree with corresponding counts */ 
+    build(freqs);        
+
+    /* opens output file */
+    ofstream numFile;
+    numFile.open(outfile);
+
+    /* prints each count on new line */
+    for(int i = 0; x < freq.size() ; i++){
+        numFile << freq[i];
+	numFile << '\n'; 
+    }
+    /* reset reading input file back to start */ 
+    theFile.clear()
+    theFile.seekg(0, theFile.beg);
+
+    /* for each char, encode the symbol which prints to the same output stream*/
+    while(1){
+	theFile >> nextChar; 
+        if(theFile.eof()) break;
+        encode(nextChar, numFile);
+    }
+
+    theFile.close();
+    numFile.close();
+
     cerr << "TODO: compress '" << infile << "' -> '"
         << outfile << "' here (ASCII)" << endl;
 }

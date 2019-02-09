@@ -50,14 +50,16 @@ void HCTree::build(const vector<int>& freqs) {
 	HCNode * parental;
 
 	/* sum of 2 node counts */
-	sum = add1->count + add2->count; 
+	sum = add1->count + add2->count;
+
+	/* set new parent to have smaller symbol, c0 as lower count, c1 as higher count*/
 	if(add1->symbol < add2->symbol){
-            parental = new HCNode(sum, add2->symbol, add1, add2);
-	}
-	else{
             parental = new HCNode(sum, add1->symbol, add1, add2);
+        }
+        else{
+            parental = new HCNode(sum, add2->symbol, add1, add2);
 	}	
-	
+    }
 	/* attach nodes to parent and parent's children*/
 	add1->parent = parental;
 	add2->parent = parental; 
@@ -75,7 +77,33 @@ void HCTree::build(const vector<int>& freqs) {
  *  tree, and initialize root pointer and leaves vector.
  */
 void HCTree::encode(byte symbol, ostream& out) const {
-    // TODO (checkpoint)
+
+    /* gets ref to node with corresponding symb */
+    HCNode * leaf;
+    leaf = leaves[symbol];
+
+    /* stack to hold and reverse code */
+    std::stack<int> code; 
+
+    /* while not at root yet */
+    while(!leaf->parent){
+        if(leaf->parent->c0 == leaf){
+	    code.push(0);
+	}
+	else{
+	    code.push(1);
+	}
+	/* moves up one level */
+	leaf = leaf->parent; 
+    }
+
+    /* write to out the entire stack content */
+    while(!code.empty()){
+        out << code.top();
+	code.pop();
+    }
+    
+
 }
 
 /** Return the symbol coded in the next sequence of bits (represented as 
@@ -84,7 +112,28 @@ void HCTree::encode(byte symbol, ostream& out) const {
  *  tree, and initialize root pointer and leaves vector.
  */
 byte HCTree::decode(istream& in) const {
-    return 0;  // TODO (checkpoint)
+
+    HCNode * top = root;
+
+    unsigned char nextChar;
+
+
+
+    /* while there are bits to read, go down tree */
+    while(1){
+        in >> nextChar;
+	if(in.eof()) break;
+	
+        /* reads next 0/1 bit if and only if node is not a leaf yet */
+        if(nextChar == '0' && top->c0 != nullptr){
+            top = top->c0;
+	}
+	else if(nextChar == '1'&& top->1 != nullptr){
+	    top = top->c1; 
+	}
+    }
+
+    return top->symbol;  
 }
 
 /** Write to the given BitOutputStream

@@ -26,7 +26,7 @@ void uncompressAscii(const string & infile, const string & outfile) {
     HCTree tree;
 	ifstream theFile;
 	int nextChar;
-    theFile.open(infile);
+    theFile.open(infile, ios::binary);
 
     /* holds all counts of symbols to pass in for build */
     vector<int> freqs (256, 0);
@@ -44,7 +44,7 @@ void uncompressAscii(const string & infile, const string & outfile) {
 
     /* opens output file */
     ofstream numFile;
-    numFile.open(outfile);
+    numFile.open(outfile, ios::binary);
 
     /* loop for the line that contains bits to uncompress */
     while(1)

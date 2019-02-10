@@ -26,7 +26,7 @@ void compressAscii(const string & infile, const string & outfile) {
 	HCTree tree;
     ifstream theFile;
     int nextChar;
-    theFile.open(infile);
+    theFile.open(infile, ios::binary);
     
     vector<int> freqs (256, 0);
 
@@ -47,7 +47,7 @@ void compressAscii(const string & infile, const string & outfile) {
 
     /* opens output file */
     ofstream numFile;
-    numFile.open(outfile);
+    numFile.open(outfile, ios::binary);
 
     /* prints each count on new line */
     for(unsigned int i = 0; i < freqs.size() ; i++){

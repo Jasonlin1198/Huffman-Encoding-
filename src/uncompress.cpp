@@ -23,8 +23,8 @@ void print_usage(char ** argv) {
  * For debugging purposes, uses ASCII '0' and '1' rather than bitwise I/O.
  */
 void uncompressAscii(const string & infile, const string & outfile) {
-    ifstream theFile;
-    unsigned char nextChar; 
+    HCTree tree;
+	ifstream theFile;
     theFile.open(infile);
 
     /* holds all counts of symbols to pass in for build */
@@ -41,18 +41,17 @@ void uncompressAscii(const string & infile, const string & outfile) {
     }
   
     /* build huffman tree from header info */
-    build(freqs);
+    tree.build(freqs);
 
     /* opens output file */
     ofstream numFile;
     numFile.open(outfile);
 
-    int nextByte;
     /* loop for the line that contains bits to uncompress */
     while(1){
 		if(theFile.eof()) break;
 		/* adds symbol to output file */
-        numFile << decode(theFile);
+        numFile << tree.decode(theFile);
         
     }
 

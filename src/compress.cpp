@@ -46,7 +46,7 @@ void compressAscii(const string & infile, const string & outfile) {
     numFile.open(outfile);
 
     /* prints each count on new line */
-    for(int i = 0; i < freqs.size() ; i++){
+    for(unsigned int i = 0; i < freqs.size() ; i++){
         numFile << freqs[i];
 		numFile << '\n'; 
     }

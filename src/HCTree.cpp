@@ -18,15 +18,15 @@ HCTree::~HCTree() {
  */
 void HCTree::build(const vector<int>& freqs) {
     /* if tree is non-empty */
-    if(!root)
-	{
-		deleteAll(root);
-    }
+    //if(!root)
+	//{
+	//	deleteAll(root);
+    //}
 
     std::priority_queue<HCNode*, std::vector<HCNode*>, HCNodePtrComp> pq;
 
     /* intialize leaves in priority queue */
-    for(int i = 0; i < freqs.size(); i++)
+    for(unsigned int i = 0; i < freqs.size(); i++)
 	{
 		if(freqs[i] != 0)
 		{
@@ -182,7 +182,7 @@ void HCTree::printTreeHelper(HCNode * node, string indent) const {
     }
 }
  
-void deleteAll(HCNode * n)
+void HCTree::deleteAll(HCNode * n)
 {
 	if(!n)
 	{

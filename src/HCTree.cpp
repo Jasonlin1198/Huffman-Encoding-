@@ -121,11 +121,23 @@ byte HCTree::decode(istream& in) const {
 
     HCNode * top = root;
 
-    unsigned char nextChar;
+    char nextChar;
 
     /* while there are bits to read, go down tree */
-    while(1){
-        in >> nextChar;
+    while(1)
+	{
+		//exits the loop if nullptr is reached
+		if(top->c0 == nullptr || top->c1 == nullptr)
+		{
+			break;
+		}
+		
+		//gets the next bit from the input stream.
+        nextChar = in.get();
+		if(in.eof())
+		{
+			break;
+		}
 	
         /* reads next 0/1 bit if and only if node is not a leaf yet */
         if(nextChar == '0' && top->c0 != nullptr){
@@ -134,14 +146,9 @@ byte HCTree::decode(istream& in) const {
 		else if(nextChar == '1' && top->c1 != nullptr){
 	    	top = top->c1; 
 		}
-		/* breaks if nullptr is reached */
-		else
-		{
-			break;
-		}
     }
 
-    return top->symbol;  
+    return top->symbol; 
 }
 
 /** Write to the given BitOutputStream

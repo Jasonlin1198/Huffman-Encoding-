@@ -25,17 +25,21 @@ void compressAscii(const string & infile, const string & outfile) {
     
 	HCTree tree;
     ifstream theFile;
-    unsigned char nextChar;
+    int nextChar;
     theFile.open(infile);
     
     vector<int> freqs (256, 0);
 
     /* gets freq of symbols in file in vector */
-    while(1){
-	theFile >> nextChar; 
-        if(theFile.eof()) break;
-	/* increments index of symbol that was read */
-	freqs[nextChar]++;
+    while(1)
+	{
+		nextChar = theFile.get();
+        if(theFile.eof()) 
+		{
+			break;
+		}
+		/* increments index of symbol that was read */
+		freqs[nextChar]++;
     }
     
     /* build huffman tree with corresponding counts */ 
@@ -50,14 +54,19 @@ void compressAscii(const string & infile, const string & outfile) {
         numFile << freqs[i];
 		numFile << '\n'; 
     }
+
     /* reset reading input file back to start */ 
     theFile.clear();
     theFile.seekg(0, theFile.beg);
 
     /* for each char, encode the symbol which prints to the same output stream*/
-    while(1){
-	theFile >> nextChar; 
-        if(theFile.eof()) break;
+    while(1)
+	{
+		nextChar = theFile.get();
+        if(theFile.eof())
+		{
+			break;
+		}
         tree.encode(nextChar, numFile);
     }
 

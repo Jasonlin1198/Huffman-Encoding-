@@ -25,19 +25,18 @@ void print_usage(char ** argv) {
 void uncompressAscii(const string & infile, const string & outfile) {
     HCTree tree;
 	ifstream theFile;
-    theFile.open(infile, ios::binary);
+	int nextChar;
+    theFile.open(infile);
 
     /* holds all counts of symbols to pass in for build */
     vector<int> freqs (256, 0);
 
-    int x = 0;
-    int add; 
     /* loops for each of the 256 ascii chars in the header */
-    while(x < 256){
-	//CHECK -- getting int value not a char //
-        add = theFile.get(); 
-        freqs[x] = add;	    
-	x++;
+    for(unsigned int i = 0; i < freqs.size(); i++)
+	{
+		//CHECK -- getting int value not a char //
+        nextChar = theFile.get(); 
+        freqs[i] = nextChar;	    
     }
   
     /* build huffman tree from header info */
@@ -48,8 +47,12 @@ void uncompressAscii(const string & infile, const string & outfile) {
     numFile.open(outfile);
 
     /* loop for the line that contains bits to uncompress */
-    while(1){
-		if(theFile.eof()) break;
+    while(1)
+	{
+		if(theFile.eof())
+		{
+			break;
+		}
 		/* adds symbol to output file */
         numFile << tree.decode(theFile);
         

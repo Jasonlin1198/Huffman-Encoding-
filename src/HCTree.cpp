@@ -1,4 +1,4 @@
-include <stack>
+#include <stack>
 #include <queue>
 
 #include "HCTree.hpp"
@@ -18,54 +18,56 @@ HCTree::~HCTree() {
  */
 void HCTree::build(const vector<int>& freqs) {
     /* if tree is non-empty */
-    if(!root){
-	deleteAll(root);
+    if(!root)
+	{
+		deleteAll(root);
     }
 
     std::priority_queue<HCNode*, std::vector<HCNode*>, HCNodePtrComp> pq;
 
     /* intialize leaves in priority queue */
-    for(int i = 0; i < freq.size() ; i++ ){
-	if(freqs[i] != 0){
-
-	    /* makes new node, fills data, pushes on queue */
-	    HCNode* node = new HCNode(freqs[i], i);
-	    leaves[i] = node; 
-	    pq.push(node);
-	}
+    for(int i = 0; i < freqs.size(); i++)
+	{
+		if(freqs[i] != 0)
+		{
+	    	/* makes new node, fills data, pushes on queue */
+	    	HCNode* node = new HCNode(freqs[i], i);
+	    	leaves[i] = node; 
+	    	pq.push(node);
+		}
     } 
 
     HCNode* add1;
     HCNode* add2;
     int sum = 0;
-
-    /* loop to create tree */
-    while(pq.size() > 1){
-	
-        add1 = pq.top();
-	pq.pop();
-	add2 = pq.top();
-	pq.pop();
 	
 	HCNode * parental;
+    /* loop to create tree */
+    while(pq.size() > 1)
+	{
+        add1 = pq.top();
+		pq.pop();
+		add2 = pq.top();
+		pq.pop();
 
-	/* sum of 2 node counts */
-	sum = add1->count + add2->count;
+		/* sum of 2 node counts */
+		sum = add1->count + add2->count;
 
-	/* set new parent to have smaller symbol, c0 as lower count, c1 as higher count*/
-	if(add1->symbol < add2->symbol){
+		/* set new parent to have smaller symbol, c0 as lower count, c1 as higher count*/
+		if(add1->symbol < add2->symbol)
+		{
             parental = new HCNode(sum, add1->symbol, add1, add2);
         }
-        else{
+        else
+		{
             parental = new HCNode(sum, add2->symbol, add1, add2);
-	}	
+		}	
     }
 	/* attach nodes to parent and parent's children*/
-	add1->parent = parental;
-	add2->parent = parental; 
+	add1->p = parental;
+	add2->p = parental; 
 	
 	pq.push(parental);
-    }
 
     root = pq.top();
 
@@ -86,21 +88,21 @@ void HCTree::encode(byte symbol, ostream& out) const {
     std::stack<int> code; 
 
     /* while not at root yet */
-    while(!leaf->parent){
-        if(leaf->parent->c0 == leaf){
+    while(!leaf->p){
+        if(leaf->p->c0 == leaf){
 	    code.push(0);
-	}
-	else{
-	    code.push(1);
-	}
-	/* moves up one level */
-	leaf = leaf->parent; 
+		}
+		else{
+	    	code.push(1);
+		}
+		/* moves up one level */
+		leaf = leaf->p; 
     }
 
     /* write to out the entire stack content */
     while(!code.empty()){
         out << code.top();
-	code.pop();
+		code.pop();
     }
     
 
@@ -117,20 +119,22 @@ byte HCTree::decode(istream& in) const {
 
     unsigned char nextChar;
 
-
-
     /* while there are bits to read, go down tree */
     while(1){
         in >> nextChar;
-	if(in.eof()) break;
 	
         /* reads next 0/1 bit if and only if node is not a leaf yet */
         if(nextChar == '0' && top->c0 != nullptr){
             top = top->c0;
-	}
-	else if(nextChar == '1'&& top->1 != nullptr){
-	    top = top->c1; 
-	}
+		}
+		else if(nextChar == '1' && top->c1 != nullptr){
+	    	top = top->c1; 
+		}
+		/* breaks if nullptr is reached */
+		else
+		{
+			break;
+		}
     }
 
     return top->symbol;  
@@ -176,4 +180,17 @@ void HCTree::printTreeHelper(HCNode * node, string indent) const {
         printTreeHelper(node->c0, indent + "  ");
         printTreeHelper(node->c1, indent + "  ");
     }
+}
+ 
+void deleteAll(HCNode * n)
+{
+	if(!n)
+	{
+	    return; 
+	}
+	deleteAll(n->c0);
+	deleteAll(n->c1);
+    
+	delete n;
+	return;
 }

@@ -5,8 +5,11 @@
  *  And we want to break ties deterministically.
  */
 bool HCNode::operator<(const HCNode& other) {
-    if(count != other.count) return count > other.count;
+    if(count != other.count) 
+	{
+		return count > other.count;
+	}
 
-    return symb > other.symb; 
+    return symbol > other.symbol; 
 
 }

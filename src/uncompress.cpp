@@ -49,8 +49,9 @@ void uncompressAscii(const string & infile, const string & outfile) {
 
     int nextByte;
     /* loop for the line that contains bits to uncompress */
-    while((nextByte = theFile.get()) != EOF){
-	/* adds symbol to output file */
+    while(1){
+		if(theFile.eof()) break;
+		/* adds symbol to output file */
         numFile << decode(theFile);
         
     }

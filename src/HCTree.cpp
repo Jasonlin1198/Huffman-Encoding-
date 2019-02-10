@@ -56,11 +56,11 @@ void HCTree::build(const vector<int>& freqs) {
 		/* set new parent to have smaller symbol, c0 as lower count, c1 as higher count*/
 		if(add1->symbol < add2->symbol)
 		{
-            parental = new HCNode(sum, add1->symbol, add1, add2);
+            parental = new HCNode(sum, add2->symbol, add1, add2);
         }
         else
 		{
-            parental = new HCNode(sum, add2->symbol, add1, add2);
+            parental = new HCNode(sum, add1->symbol, add1, add2);
 		}
 
 		/* attach nodes to parent and parent's children*/

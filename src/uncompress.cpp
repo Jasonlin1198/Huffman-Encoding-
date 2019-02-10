@@ -47,16 +47,11 @@ void uncompressAscii(const string & infile, const string & outfile) {
     numFile.open(outfile, ios::binary);
 
     /* loop for the line that contains bits to uncompress */
-    while(1)
+    while(!theFile.eof())
 	{
-		if(theFile.eof())
-		{
-			break;
-		}
 		/* adds symbol to output file */
         numFile << tree.decode(theFile);
-        
-    }
+	}
 
     theFile.close();
     numFile.close();

@@ -34,7 +34,7 @@ void compressAscii(const string & infile, const string & outfile) {
     while(1)
 	{
 		nextChar = theFile.get();
-        if(theFile.eof()) 
+        if(nextChar == theFile.eof()) 
 		{
 			break;
 		}
@@ -63,7 +63,7 @@ void compressAscii(const string & infile, const string & outfile) {
     while(1)
 	{
 		nextChar = theFile.get();
-        if(theFile.eof())
+        if(nextChar == theFile.eof())
 		{
 			break;
 		}

@@ -25,7 +25,7 @@ void print_usage(char ** argv) {
 void uncompressAscii(const string & infile, const string & outfile) {
     HCTree tree;
 	ifstream theFile;
-    theFile.open(infile);
+    theFile.open(infile, ios::binary);
 
     /* holds all counts of symbols to pass in for build */
     vector<int> freqs (256, 0);

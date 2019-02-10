@@ -18,10 +18,10 @@ HCTree::~HCTree() {
  */
 void HCTree::build(const vector<int>& freqs) {
     /* if tree is non-empty */
-    //if(!root)
-	//{
-	//	deleteAll(root);
-    //}
+    if(!root)
+	{
+		delete(root);
+    }
 
     std::priority_queue<HCNode*, std::vector<HCNode*>, HCNodePtrComp> pq;
 
@@ -61,16 +61,17 @@ void HCTree::build(const vector<int>& freqs) {
         else
 		{
             parental = new HCNode(sum, add2->symbol, add1, add2);
-		}	
-    }
-	/* attach nodes to parent and parent's children*/
-	add1->p = parental;
-	add2->p = parental; 
+		}
+
+		/* attach nodes to parent and parent's children*/
+		add1->p = parental;
+		add2->p = parental;
 	
-	pq.push(parental);
+		pq.push(parental);
+    }
 
     root = pq.top();
-
+	pq.pop();
 }
 
 /** Write to the given ostream
@@ -85,18 +86,21 @@ void HCTree::encode(byte symbol, ostream& out) const {
     leaf = leaves[symbol];
 
     /* stack to hold and reverse code */
-    std::stack<int> code; 
+    std::stack<int> code;
 
     /* while not at root yet */
-    while(!leaf->p){
-        if(leaf->p->c0 == leaf){
-	    code.push(0);
+    while(leaf != root)
+	{
+        if(leaf->p->c0 == leaf)
+		{
+	    	code.push(0);
 		}
-		else{
+		else
+		{
 	    	code.push(1);
 		}
 		/* moves up one level */
-		leaf = leaf->p; 
+		leaf = leaf->p;
     }
 
     /* write to out the entire stack content */

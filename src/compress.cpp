@@ -31,10 +31,22 @@ void compressAscii(const string & infile, const string & outfile)
     
     vector<int> freqs (256, 0);
 
-    /* Reads in the input file and then updates the frequency of each symbol */
-    while((nextByte = theFile.get()) != EOF){
-	/* increments index of symbol that was read */
-	freqs[nextByte]++;
+    // if file is empty, write 256 0's as header
+    if(theFile.peek() == EOF)
+	{
+		for(unsigned int x = 0; x < freqs.size() ; x++)
+		{
+	    	freqs[x] = 0; 
+		}
+	}
+	else
+	{
+    	/* Reads in the input file and then updates the frequency of each symbol */
+    	while((nextByte = theFile.get()) != EOF)
+		{
+			/* increments index of symbol that was read */
+			freqs[nextByte]++;
+		}
     }
     
     /* build huffman tree with corresponding counts */ 

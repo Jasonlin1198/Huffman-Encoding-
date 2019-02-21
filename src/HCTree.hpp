@@ -17,7 +17,8 @@ using namespace std;
  */
 class HCNodePtrComp {
 public:
-    bool operator()(HCNode*& lhs, HCNode*& rhs) const {
+    bool operator()(HCNode*& lhs, HCNode*& rhs) const
+	{
         return *lhs < *rhs;
     }
 };
@@ -41,7 +42,8 @@ private:
 public:
     /** Constructor for HCTree
      */
-    explicit HCTree() : root(0) {
+    explicit HCTree() : root(0)
+	{
         leaves = vector<HCNode*>(256, (HCNode*) 0);
     }
 

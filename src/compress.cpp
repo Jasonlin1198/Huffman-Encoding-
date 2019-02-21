@@ -9,7 +9,8 @@
 
 using namespace std;
 
-void print_usage(char ** argv) {
+void print_usage(char ** argv)
+{
     cout << "Usage:" << endl;
     cout << "  " << argv[0] << " INFILE OUTFILE [-b]" << endl;
     cout << "Command-line flags:" << endl;
@@ -21,20 +22,20 @@ void print_usage(char ** argv) {
  * and produces a compressed version in outfile.
  * For debugging purposes, uses ASCII '0' and '1' rather than bitwise I/O.
  */
-void compressAscii(const string & infile, const string & outfile) {
-    
+void compressAscii(const string & infile, const string & outfile)
+{
 	HCTree tree;
     ifstream theFile;
-    int nextChar;
+    unsigned char nextChar;
     theFile.open(infile, ios::binary);
     
-    vector<int> freqs (256, 0);
+    vector<int> freqs(256, 0);
 
-    /* gets freq of symbols in file in vector */
+    /* Reads in the input file and then updates the frequency of each symbol */
     while(1)
 	{
-		nextChar = theFile.get();
-        if(nextChar == theFile.eof()) 
+		theFile >> nextChar;
+        if(theFile.eof())
 		{
 			break;
 		}
@@ -50,9 +51,10 @@ void compressAscii(const string & infile, const string & outfile) {
     numFile.open(outfile, ios::binary);
 
     /* prints each count on new line */
-    for(unsigned int i = 0; i < freqs.size() ; i++){
+    for(unsigned int i = 0; i < freqs.size() ; i++)
+	{
         numFile << freqs[i];
-		numFile << '\n'; 
+		numFile << '\n';
     }
 
     /* reset reading input file back to start */ 
@@ -63,7 +65,7 @@ void compressAscii(const string & infile, const string & outfile) {
     while(1)
 	{
 		nextChar = theFile.get();
-        if(nextChar == theFile.eof())
+        if(theFile.eof())
 		{
 			break;
 		}

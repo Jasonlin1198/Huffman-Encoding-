@@ -6,7 +6,8 @@
 /**
  * Destructor for HCTree
  */
-HCTree::~HCTree() {
+HCTree::~HCTree()
+{
     deleteAll(root);
 }
 
@@ -16,7 +17,8 @@ HCTree::~HCTree() {
  *  POSTCONDITION:  root points to the root of the tree,
  *  and leaves[i] points to the leaf node containing byte i.
  */
-void HCTree::build(const vector<int>& freqs) {
+void HCTree::build(const vector<int>& freqs)
+{
     /* if tree is non-empty */
     if(!root)
 	{
@@ -53,7 +55,7 @@ void HCTree::build(const vector<int>& freqs) {
 		/* sum of 2 node counts */
 		sum = add1->count + add2->count;
 
-		/* set new parent to have smaller symbol, c0 as lower count, c1 as higher count*/
+		/* set new parent to have larger symbol, c0 as lower count, c1 as higher count*/
 		if(add1->symbol < add2->symbol)
 		{
             parental = new HCNode(sum, add2->symbol, add1, add2);
@@ -79,8 +81,8 @@ void HCTree::build(const vector<int>& freqs) {
  *  PRECONDITION: build() has been called, to create the coding
  *  tree, and initialize root pointer and leaves vector.
  */
-void HCTree::encode(byte symbol, ostream& out) const {
-
+void HCTree::encode(byte symbol, ostream& out) const
+{
     /* gets ref to node with corresponding symb */
     HCNode * leaf;
     leaf = leaves[symbol];
@@ -103,13 +105,12 @@ void HCTree::encode(byte symbol, ostream& out) const {
 		leaf = leaf->p;
     }
 
-    /* write to out the entire stack content */
-    while(!code.empty()){
+    /* writes out the entire stack content */
+    while(!code.empty())
+	{
         out << code.top();
 		code.pop();
     }
-    
-
 }
 
 /** Return the symbol coded in the next sequence of bits (represented as 
@@ -117,10 +118,9 @@ void HCTree::encode(byte symbol, ostream& out) const {
  *  PRECONDITION: build() has been called, to create the coding
  *  tree, and initialize root pointer and leaves vector.
  */
-byte HCTree::decode(istream& in) const {
-
+byte HCTree::decode(istream& in) const
+{
     HCNode * top = root;
-
     char nextChar;
 
     /* while there are bits to read, go down tree */

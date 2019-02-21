@@ -22,7 +22,8 @@ void print_usage(char ** argv) {
  * and produces an uncompressed version in outfile.
  * For debugging purposes, uses ASCII '0' and '1' rather than bitwise I/O.
  */
-void uncompressAscii(const string & infile, const string & outfile) {
+void uncompressAscii(const string & infile, const string & outfile)
+{
     HCTree tree;
 	ifstream theFile;
 	int nextChar;

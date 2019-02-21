@@ -191,13 +191,19 @@ void HCTree::printTreeHelper(HCNode * node, string indent) const {
  
 void HCTree::deleteAll(HCNode * n)
 {
+	//If the tree is empty, do nothing.
 	if(!n)
 	{
 	    return; 
 	}
-	deleteAll(n->c0);
-	deleteAll(n->c1);
-    
+
+	if(n->c0)
+	{
+		deleteAll(n->c0);
+	}
+	if(n->c1)
+	{
+		deleteAll(n->c1);
+    }
 	delete n;
-	return;
 }

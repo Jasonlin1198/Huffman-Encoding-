@@ -20,7 +20,7 @@ HCTree::~HCTree()
 void HCTree::build(const vector<int>& freqs)
 {
     /* if tree is non-empty */
-    if(root)
+    if(root != nullptr)
 	{
 		delete(this);
     }

@@ -71,9 +71,13 @@ void uncompressAscii(const string & infile, const string & outfile)
 	/* if we have multiple nodes in our tree */
     if(numUnique > 1)
 	{
-		/* loop for the line that contains the bits to uncompress */
    		while(!theFile.eof())
 		{
+			/* if we have already decoded the last letter, break the loop */
+			if(theFile.peek() == EOF)
+			{
+				break;
+			}
 			/* adds symbol to output file */
         	numFile << (unsigned char)tree.decode(theFile);
 		}

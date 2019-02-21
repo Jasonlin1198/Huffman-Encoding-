@@ -64,9 +64,6 @@ void compressAscii(const string & infile, const string & outfile)
 
     theFile.close();
     numFile.close();
-
-    cerr << "TODO: compress '" << infile << "' -> '"
-         << outfile << "' here (ASCII)" << endl;
 }
 
 /**

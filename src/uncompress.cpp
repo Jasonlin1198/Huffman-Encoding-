@@ -85,9 +85,6 @@ void uncompressAscii(const string & infile, const string & outfile)
 
     theFile.close();
     numFile.close();
-
-    cerr << "TODO: uncompress '" << infile << "' -> '"
-        << outfile << "' here (ASCII)" << endl;
 }
 
 /**

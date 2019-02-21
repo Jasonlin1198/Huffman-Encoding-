@@ -9,7 +9,8 @@
 
 using namespace std;
 
-void print_usage(char ** argv) {
+void print_usage(char ** argv)
+{
     cout << "Usage:" << endl;
     cout << "  " << argv[0] << " INFILE OUTFILE [-b]" << endl;
     cout << "Command-line flags:" << endl;
@@ -21,60 +22,49 @@ void print_usage(char ** argv) {
  * and produces a compressed version in outfile.
  * For debugging purposes, uses ASCII '0' and '1' rather than bitwise I/O.
  */
-void compressAscii(const string & infile, const string & outfile) {
-    
-    HCTree tree;
-    ifstream theFile;
-    int nextChar;
-    theFile.open(infile, ios::binary);
+void compressAscii(const string & infile, const string & outfile)
+{	
+    HCTree tree; /* Huffman Tree */
+    ifstream theFile; /* Input filestream */
+    int nextByte; /* Stores the next byte to be read */
+    theFile.open(infile, ios::binary); /* opens input filestream */
     
     vector<int> freqs (256, 0);
 
-    /* gets freq of symbols in file in vector */
-    while(1)
-	{
-	nextChar = theFile.get();
-        if(nextChar == theFile.eof()) 
-		{
-			break;
-		}
-		/* increments index of symbol that was read */
-		freqs[nextChar]++;
+    /* Reads in the input file and then updates the frequency of each symbol */
+    while((nextByte = theFile.get()) != EOF){
+	/* increments index of symbol that was read */
+	freqs[nextByte]++;
     }
     
     /* build huffman tree with corresponding counts */ 
-    tree.build(freqs);        
+    tree.build(freqs);
 
     /* opens output file */
     ofstream numFile;
     numFile.open(outfile, ios::binary);
 
-    /* prints each count on new line */
-    for(unsigned int i = 0; i < freqs.size() ; i++){
-        numFile << freqs[i];
-		numFile << '\n'; 
+    /* creates the header by printing each count on a new line */
+    for(unsigned int i = 0; i < freqs.size(); i++)
+	{
+        numFile << freqs[i] << endl;
     }
 
-    /* reset reading input file back to start */ 
+    /* reset reading input file back to the start */ 
     theFile.clear();
     theFile.seekg(0, theFile.beg);
 
-    /* for each char, encode the symbol which prints to the same output stream*/
-    while(1)
-	{
-	nextChar = theFile.get();
-        if(nextChar == theFile.eof())
-		{
-			break;
-		}
-        tree.encode(nextChar, numFile);
+    /* for each character, encode the symbol and print it
+	 * to the same output stream */
+    while((nextByte = theFile.get()) != EOF){
+        tree.encode(nextByte, numFile);
     }
 
     theFile.close();
     numFile.close();
 
     cerr << "TODO: compress '" << infile << "' -> '"
-        << outfile << "' here (ASCII)" << endl;
+         << outfile << "' here (ASCII)" << endl;
 }
 
 /**
@@ -153,7 +143,8 @@ void compressBitwise(const string & infile, const string & outfile) {
         << outfile << "' here (bitwise)" << endl;
 }
 
-int main(int argc, char ** argv) {
+int main(int argc, char ** argv)
+{
     string infile = "";
     string outfile = "";
     bool bitwise = false;

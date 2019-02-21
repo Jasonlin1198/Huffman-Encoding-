@@ -6,7 +6,8 @@
 /**
  * Destructor for HCTree
  */
-HCTree::~HCTree() {
+HCTree::~HCTree()
+{
 	deleteAll(root);
 }
 
@@ -16,11 +17,12 @@ HCTree::~HCTree() {
  *  POSTCONDITION:  root points to the root of the tree,
  *  and leaves[i] points to the leaf node containing byte i.
  */
-void HCTree::build(const vector<int>& freqs) {
+void HCTree::build(const vector<int>& freqs)
+{
 	/* if tree is non-empty */
-	if(!root)
+	if(root != nullptr)
 	{
-		delete(root);
+		delete(this);
 	}
 
 	std::priority_queue<HCNode*, std::vector<HCNode*>, HCNodePtrComp> pq;
@@ -39,8 +41,9 @@ void HCTree::build(const vector<int>& freqs) {
 
 	HCNode* add1;
 	HCNode* add2;
-	int sum = 0;
 	HCNode * parental;
+	int sum = 0;
+
 	/* loop to create tree */
 	while(pq.size() > 1)
 	{
@@ -52,10 +55,10 @@ void HCTree::build(const vector<int>& freqs) {
 		/* sum of 2 node counts */
 		sum = add1->count + add2->count;
 
-		/* set new parent to have smaller symbol, c0 as lower count, c1 as higher count*/
+		/* set new parent to have larger symbol, c0 as lower count, c1 as higher count*/
 		if(add1->symbol < add2->symbol){
 			parental = new HCNode(sum, add2->symbol, add1, add2);
-		}
+		}  
 		else
 		{
 			parental = new HCNode(sum, add1->symbol, add1, add2);
@@ -77,8 +80,9 @@ void HCTree::build(const vector<int>& freqs) {
  *  PRECONDITION: build() has been called, to create the coding
  *  tree, and initialize root pointer and leaves vector.
  */
-void HCTree::encode(byte symbol, ostream& out) const {
 
+void HCTree::encode(byte symbol, ostream& out) const
+{
 	/* gets ref to node with corresponding symb */
 	HCNode * leaf;
 	leaf = leaves[symbol];
@@ -101,13 +105,12 @@ void HCTree::encode(byte symbol, ostream& out) const {
 		leaf = leaf->p;
 	}
 
-	/* write to out the entire stack content */
-	while(!code.empty()){
+	/* writes out the entire stack content */
+	while(!code.empty())
+	{
 		out << code.top();
 		code.pop();
 	}
-
-
 }
 
 /** Return the symbol coded in the next sequence of bits (represented as 
@@ -115,38 +118,32 @@ void HCTree::encode(byte symbol, ostream& out) const {
  *  PRECONDITION: build() has been called, to create the coding
  *  tree, and initialize root pointer and leaves vector.
  */
-byte HCTree::decode(istream& in) const {
-
+byte HCTree::decode(istream& in) const
+{
 	HCNode * top = root;
-
 	char nextChar;
 
 	/* while there are bits to read, go down tree */
-	while(1)
+	while(top->c0 != nullptr || top->c1 != nullptr)
 	{
-		//exits the loop if nullptr is reached
-		if(top->c0 == nullptr || top->c1 == nullptr)
-		{
-			break;
-		}
-
-		//gets the next bit from the input stream.
+		/* gets the next bit from the input stream */
 		nextChar = in.get();
 		if(in.eof())
 		{
 			break;
 		}
-
 		/* reads next 0/1 bit if and only if node is not a leaf yet */
-		if(nextChar == '0' && top->c0 != nullptr){
+		if(nextChar == '0' && top->c0 != nullptr)
+		{
 			top = top->c0;
 		}
-		else if(nextChar == '1' && top->c1 != nullptr){
+		else if(nextChar == '1' && top->c1 != nullptr)
+		{
 			top = top->c1; 
 		}
 	}
 
-	return top->symbol; 
+	return top->symbol;
 }
 
 /** Write to the given BitOutputStream
@@ -155,7 +152,7 @@ byte HCTree::decode(istream& in) const {
  *  tree, and initialize root pointer and leaves vector.
  */
 void HCTree::encode(byte symbol, BitOutputStream& out) const {
-	
+
 	/* gets ref to node with corresponding symb */
 	HCNode * leaf;
 	leaf = leaves[symbol];
@@ -185,9 +182,6 @@ void HCTree::encode(byte symbol, BitOutputStream& out) const {
 		out.writeBit(code.top());
 		code.pop();
 	}
-
-
-
 }
 
 /** Return symbol coded in the next sequence of bits from the stream.
@@ -204,7 +198,7 @@ byte HCTree::decode(BitInputStream& in) const {
 		//exits the loop if nullptr is reached
 		if(top->c0 == nullptr || top->c1 == nullptr)
 		{
-	   	    break;
+			break;
 		}
 
 		//gets the next bit from the bitwise stream.
@@ -212,15 +206,15 @@ byte HCTree::decode(BitInputStream& in) const {
 
 		if(dir == EOF)
 		{
-		     break;
+			break;
 		}
 
 		/* reads next 0/1 bit if and only if node is not a leaf yet */
 		if(dir == false  && top->c0 != nullptr){
-		    top = top->c0;
+			top = top->c0;
 		}
 		else if(dir  == true && top->c1 != nullptr){
-		    top = top->c1; 
+			top = top->c1; 
 		}
 	}
 
@@ -254,13 +248,19 @@ void HCTree::printTreeHelper(HCNode * node, string indent) const {
 
 void HCTree::deleteAll(HCNode * n)
 {
+	//If the tree is empty, do nothing.
 	if(!n)
 	{
 		return; 
 	}
-	deleteAll(n->c0);
-	deleteAll(n->c1);
 
+	if(n->c0)
+	{
+		deleteAll(n->c0);
+	}
+	if(n->c1)
+	{
+		deleteAll(n->c1);
+	}
 	delete n;
-	return;
 }

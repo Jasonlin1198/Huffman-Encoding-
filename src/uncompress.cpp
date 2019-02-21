@@ -22,23 +22,24 @@ void print_usage(char ** argv) {
  * and produces an uncompressed version in outfile.
  * For debugging purposes, uses ASCII '0' and '1' rather than bitwise I/O.
  */
-void uncompressAscii(const string & infile, const string & outfile) {
+void uncompressAscii(const string & infile, const string & outfile)
+{
     HCTree tree;
     ifstream theFile;
     int nextChar;
     theFile.open(infile, ios::binary);
 
     /* holds all counts of symbols to pass in for build */
-    vector<int> freqs (256, 0);
+    vector<int> freqs(256, 0);
 
-    /* loops for each of the 256 ascii chars in the header */
+    /* loops through each of the 256 ascii chars in the header and 
+	 * constructs the frequencies vector to build the Huffman tree */
     for(unsigned int i = 0; i < freqs.size(); i++)
 	{
-		//CHECK -- getting int value not a char //
-        nextChar = theFile.get(); 
-        freqs[i] = nextChar;	    
+		theFile >> nextChar;
+		freqs[i] = nextChar;
     }
-  
+
     /* build huffman tree from header info */
     tree.build(freqs);
 
@@ -46,15 +47,40 @@ void uncompressAscii(const string & infile, const string & outfile) {
     ofstream numFile;
     numFile.open(outfile, ios::binary);
 
-    /* loop for the line that contains bits to uncompress */
-    while(1)
+	/* counts how many elements appear at least once */
+	int numUnique = 0;
+	int index = 0;
+	for(unsigned int i = 0; i < freqs.size(); i++)
 	{
-		if(theFile.eof())
+		if(freqs[i] != 0)
 		{
-			break;
+			numUnique++;
+			index = i;
 		}
-		/* adds symbol to output file */
-        numFile << tree.decode(theFile);
+	}
+
+	/* if we only have one node in our tree */
+	if(numUnique == 1)
+	{
+		for(int i = 0; i < freqs[index]; i++)
+		{
+			numFile << (unsigned char)index;
+		}
+	}
+
+	/* if we have multiple nodes in our tree */
+    if(numUnique > 1)
+	{
+   		while(!theFile.eof())
+		{
+			/* if we have already decoded the last letter, break the loop */
+			if(theFile.peek() == EOF)
+			{
+				break;
+			}
+			/* adds symbol to output file */
+        	numFile << (unsigned char)tree.decode(theFile);
+		}
 	}
 
     theFile.close();
@@ -119,30 +145,42 @@ void uncompressBitwise(const string & infile, const string & outfile) {
         << outfile << "' here (bitwise)" << endl;
 }
 
-int main(int argc, char ** argv) {
+int main(int argc, char ** argv)
+{
     string infile = "";
     string outfile = "";
     bool bitwise = false;
-    for (int i = 1; i < argc; i++) {
+
+    for(int i = 1; i < argc; i++)
+	{
         string currentArg = argv[i];
-        if (currentArg == "-b") {
+        if(currentArg == "-b")
+		{
             bitwise = true;
-        } else if (infile == "") {
+        }
+		else if(infile == "")
+		{
             infile = currentArg;
-        } else {
+        } 
+		else
+		{
             outfile = currentArg;
         }
     }
 
-    if (infile == "" || outfile == "") {
+    if (infile == "" || outfile == "")
+	{
         cout << "ERROR: Must provide input and output files" << endl;
         print_usage(argv);
         return 1;
     }
 
-    if (bitwise) {
+    if(bitwise)
+	{
         uncompressBitwise(infile, outfile);
-    } else {
+    }
+	else
+	{
         uncompressAscii(infile, outfile);
     }
 

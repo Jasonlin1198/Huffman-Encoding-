@@ -43,22 +43,44 @@ void uncompressAscii(const string & infile, const string & outfile)
     /* build huffman tree from header info */
     tree.build(freqs);
 
-	/* gets rid of the last newline char in the header */
-	nextChar = theFile.get();
-
     /* opens output file */
     ofstream numFile;
     numFile.open(outfile, ios::binary);
 
-    /* loop for the line that contains the bits to uncompress */
-    while(1)
+	/* counts how many elements appear at least once */
+	int numUnique = 0;
+	int index = 0;
+	for(unsigned int i = 0; i < freqs.size(); i++)
 	{
-		if(theFile.eof())
+		if(freqs[i] != 0)
 		{
-			break;
+			numUnique++;
+			index = i;
 		}
-		/* adds symbol to output file */
-        numFile << (char)tree.decode(theFile);
+	}
+
+	/* if we only have one node in our tree */
+	if(numUnique == 1)
+	{
+		for(int i = 0; i < freqs[index]; i++)
+		{
+			numFile << (char)index;
+		}
+	}
+
+	/* if we have multiple nodes in our tree */
+    if(numUnique > 1)
+	{
+		/* loop for the line that contains the bits to uncompress */
+   		while(1)
+		{
+			if(theFile.eof())
+			{
+				break;
+			}
+			/* adds symbol to output file */
+        	numFile << (char)tree.decode(theFile);
+		}
 	}
 
     theFile.close();

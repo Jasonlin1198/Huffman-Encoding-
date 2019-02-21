@@ -58,7 +58,7 @@ void uncompressAscii(const string & infile, const string & outfile)
 			break;
 		}
 		/* adds symbol to output file */
-        numFile << (unsigned char)tree.decode(theFile);
+        numFile << (char)tree.decode(theFile);
 	}
 
     theFile.close();

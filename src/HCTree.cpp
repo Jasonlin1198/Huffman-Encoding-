@@ -22,7 +22,7 @@ void HCTree::build(const vector<int>& freqs)
     /* if tree is non-empty */
     if(root)
 	{
-		delete(root);
+		delete(this);
     }
 
     std::priority_queue<HCNode*, std::vector<HCNode*>, HCNodePtrComp> pq;

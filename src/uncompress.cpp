@@ -64,7 +64,7 @@ void uncompressAscii(const string & infile, const string & outfile)
 	{
 		for(int i = 0; i < freqs[index]; i++)
 		{
-			numFile << (char)index;
+			numFile << (unsigned char)index;
 		}
 	}
 
@@ -72,14 +72,10 @@ void uncompressAscii(const string & infile, const string & outfile)
     if(numUnique > 1)
 	{
 		/* loop for the line that contains the bits to uncompress */
-   		while(1)
+   		while(!theFile.eof())
 		{
-			if(theFile.eof())
-			{
-				break;
-			}
 			/* adds symbol to output file */
-        	numFile << (char)tree.decode(theFile);
+        	numFile << (unsigned char)tree.decode(theFile);
 		}
 	}
 

@@ -23,19 +23,18 @@ void print_usage(char ** argv)
  * For debugging purposes, uses ASCII '0' and '1' rather than bitwise I/O.
  */
 void compressAscii(const string & infile, const string & outfile)
-{
-	HCTree tree; /* Huffman Tree */
+{	
+    HCTree tree; /* Huffman Tree */
     ifstream theFile; /* Input filestream */
     int nextByte; /* Stores the next byte to be read */
     theFile.open(infile, ios::binary); /* opens input filestream */
     
-    vector<int> freqs(256, 0);
+    vector<int> freqs (256, 0);
 
     /* Reads in the input file and then updates the frequency of each symbol */
-    while((nextByte = theFile.get()) != EOF)
-	{
-		/* increments the index of the symbol that was read */
-		freqs[nextByte]++;
+    while((nextByte = theFile.get()) != EOF){
+	/* increments index of symbol that was read */
+	freqs[nextByte]++;
     }
     
     /* build huffman tree with corresponding counts */ 
@@ -57,8 +56,7 @@ void compressAscii(const string & infile, const string & outfile)
 
     /* for each character, encode the symbol and print it
 	 * to the same output stream */
-    while((nextByte = theFile.get()) != EOF)
-	{
+    while((nextByte = theFile.get()) != EOF){
         tree.encode(nextByte, numFile);
     }
 
@@ -71,9 +69,73 @@ void compressAscii(const string & infile, const string & outfile)
  * and produces a compressed version in outfile.
  * Uses bitwise I/O.
  */
-void compressBitwise(const string & infile, const string & outfile)
-{
-    // TODO (final)
+void compressBitwise(const string & infile, const string & outfile) {
+    HCTree tree;
+    ifstream theFile;
+    theFile.open(infile, ios::binary);
+    unsigned char nextChar; 
+    int nextByte;
+    
+    // checks if file exists 
+    if(theFile.fail()){
+	return;
+    }
+    
+    vector<int> freqs (256, 0);
+    
+    // if file is empty, write 256 0's as header
+    if(theFile.peek() == EOF){
+	for(unsigned int x = 0; x < freqs.size() ; x++){
+	    freqs[x] = 0; 
+	}
+    }
+    else{ 
+        /* gets freq of symbols in file in vector */
+        while((nextByte = theFile.get()) != EOF) {
+        
+	/* increments index of symbol that was read */
+	freqs[nextByte]++;
+        }
+    }   
+
+    /* build huffman tree with corresponding counts */ 
+    tree.build(freqs);        
+
+    /* opens output file */
+    ofstream numFile;
+    numFile.open(outfile, ios::binary);
+
+    // prints all 4 byte int freq values each with 4 bytes (not ascii value) without new line into compressed file header
+    for(unsigned int x = 0; x < freqs.size() ; x++){
+        numFile.write( (char*)&freqs[x], sizeof(freqs[x]) ); 
+    }
+
+    //resets the file back to the start
+    theFile.close();
+    theFile.open(infile, ios::binary);
+
+    // creates bit stream to contain all raw bit data, 
+    // initialized to have 0 buffer and counter 0 with the same outfile stream as header
+    BitOutputStream stream = BitOutputStream(numFile);
+
+
+    // reading raw data from a file
+    while((nextByte = theFile.get()) != EOF){
+	//casts to a byte size for encode parameter
+	nextChar = (unsigned char)nextByte;
+
+	//takes byte, puts in bitwise buffer and prints to ostream when full
+        tree.encode(nextChar, stream);
+
+    }
+
+    //last call to flush to write out any last bits 
+    stream.flush();
+
+    //closes both input and output streams 
+    theFile.close();
+    numFile.close();
+
     cerr << "TODO: compress '" << infile << "' -> '"
         << outfile << "' here (bitwise)" << endl;
 }

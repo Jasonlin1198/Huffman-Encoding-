@@ -41,7 +41,7 @@ TEST_CASE("Single-byte bitwise encoding and decoding") {
     freqs[54] = 250;
     tree.build(freqs);
 
-    //tree.printTree();
+    tree.printTree();
 
     ostringstream oss;
     BitOutputStream bos(oss);

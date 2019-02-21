@@ -7,7 +7,7 @@
  * Destructor for HCTree
  */
 HCTree::~HCTree() {
-    deleteAll(root);
+	deleteAll(root);
 }
 
 /** Use the Huffman algorithm to build a Huffman coding tree.
@@ -17,35 +17,34 @@ HCTree::~HCTree() {
  *  and leaves[i] points to the leaf node containing byte i.
  */
 void HCTree::build(const vector<int>& freqs) {
-    /* if tree is non-empty */
-    if(!root)
+	/* if tree is non-empty */
+	if(!root)
 	{
 		delete(root);
-    }
+	}
 
-    std::priority_queue<HCNode*, std::vector<HCNode*>, HCNodePtrComp> pq;
+	std::priority_queue<HCNode*, std::vector<HCNode*>, HCNodePtrComp> pq;
 
-    /* intialize leaves in priority queue */
-    for(unsigned int i = 0; i < freqs.size(); i++)
+	/* intialize leaves in priority queue */
+	for(unsigned int i = 0; i < freqs.size(); i++)
 	{
 		if(freqs[i] != 0)
 		{
-	    	/* makes new node, fills data, pushes on queue */
-	    	HCNode* node = new HCNode(freqs[i], i);
-	    	leaves[i] = node; 
-	    	pq.push(node);
+			/* makes new node, fills data, pushes on queue */
+			HCNode* node = new HCNode(freqs[i], i);
+			leaves[i] = node; 
+			pq.push(node);
 		}
-    } 
+	} 
 
-    HCNode* add1;
-    HCNode* add2;
-    int sum = 0;
-	
+	HCNode* add1;
+	HCNode* add2;
+	int sum = 0;
 	HCNode * parental;
-    /* loop to create tree */
-    while(pq.size() > 1)
+	/* loop to create tree */
+	while(pq.size() > 1)
 	{
-        add1 = pq.top();
+		add1 = pq.top();
 		pq.pop();
 		add2 = pq.top();
 		pq.pop();
@@ -54,23 +53,22 @@ void HCTree::build(const vector<int>& freqs) {
 		sum = add1->count + add2->count;
 
 		/* set new parent to have smaller symbol, c0 as lower count, c1 as higher count*/
-		if(add1->symbol < add2->symbol)
+		if(add1->symbol < add2->symbol){
+			parental = new HCNode(sum, add2->symbol, add1, add2);
+		}
+		else
 		{
-            parental = new HCNode(sum, add2->symbol, add1, add2);
-        }
-        else
-		{
-            parental = new HCNode(sum, add1->symbol, add1, add2);
+			parental = new HCNode(sum, add1->symbol, add1, add2);
 		}
 
 		/* attach nodes to parent and parent's children*/
 		add1->p = parental;
 		add2->p = parental;
-	
-		pq.push(parental);
-    }
 
-    root = pq.top();
+		pq.push(parental);
+	}
+
+	root = pq.top();
 	pq.pop();
 }
 
@@ -81,34 +79,34 @@ void HCTree::build(const vector<int>& freqs) {
  */
 void HCTree::encode(byte symbol, ostream& out) const {
 
-    /* gets ref to node with corresponding symb */
-    HCNode * leaf;
-    leaf = leaves[symbol];
+	/* gets ref to node with corresponding symb */
+	HCNode * leaf;
+	leaf = leaves[symbol];
 
-    /* stack to hold and reverse code */
-    std::stack<int> code;
+	/* stack to hold and reverse code */
+	std::stack<int> code;
 
-    /* while not at root yet */
-    while(leaf != root)
+	/* while not at root yet */
+	while(leaf != root)
 	{
-        if(leaf->p->c0 == leaf)
+		if(leaf->p->c0 == leaf)
 		{
-	    	code.push(0);
+			code.push(0);
 		}
 		else
 		{
-	    	code.push(1);
+			code.push(1);
 		}
 		/* moves up one level */
 		leaf = leaf->p;
-    }
+	}
 
-    /* write to out the entire stack content */
-    while(!code.empty()){
-        out << code.top();
+	/* write to out the entire stack content */
+	while(!code.empty()){
+		out << code.top();
 		code.pop();
-    }
-    
+	}
+
 
 }
 
@@ -119,36 +117,36 @@ void HCTree::encode(byte symbol, ostream& out) const {
  */
 byte HCTree::decode(istream& in) const {
 
-    HCNode * top = root;
+	HCNode * top = root;
 
-    char nextChar;
+	char nextChar;
 
-    /* while there are bits to read, go down tree */
-    while(1)
+	/* while there are bits to read, go down tree */
+	while(1)
 	{
 		//exits the loop if nullptr is reached
 		if(top->c0 == nullptr || top->c1 == nullptr)
 		{
 			break;
 		}
-		
+
 		//gets the next bit from the input stream.
-        nextChar = in.get();
+		nextChar = in.get();
 		if(in.eof())
 		{
 			break;
 		}
-	
-        /* reads next 0/1 bit if and only if node is not a leaf yet */
-        if(nextChar == '0' && top->c0 != nullptr){
-            top = top->c0;
+
+		/* reads next 0/1 bit if and only if node is not a leaf yet */
+		if(nextChar == '0' && top->c0 != nullptr){
+			top = top->c0;
 		}
 		else if(nextChar == '1' && top->c1 != nullptr){
-	    	top = top->c1; 
+			top = top->c1; 
 		}
-    }
+	}
 
-    return top->symbol; 
+	return top->symbol; 
 }
 
 /** Write to the given BitOutputStream
@@ -157,7 +155,39 @@ byte HCTree::decode(istream& in) const {
  *  tree, and initialize root pointer and leaves vector.
  */
 void HCTree::encode(byte symbol, BitOutputStream& out) const {
-    // TODO (final)
+	
+	/* gets ref to node with corresponding symb */
+	HCNode * leaf;
+	leaf = leaves[symbol];
+
+	/* stack to hold and reverse code */
+	std::stack<int> code;
+
+	/* while not at root yet */
+	while(leaf != root)
+	{
+		if(leaf->p->c0 == leaf)
+		{
+			code.push(0);
+		}
+		else
+		{
+			code.push(1);
+		}
+		/* moves up one level */
+		leaf = leaf->p;
+	}
+
+	/* write to out the entire stack content */
+	while(!code.empty()){
+
+		//writes bool bit from top of tree to bottom into bitwise stream
+		out.writeBit(code.top());
+		code.pop();
+	}
+
+
+
 }
 
 /** Return symbol coded in the next sequence of bits from the stream.
@@ -165,43 +195,72 @@ void HCTree::encode(byte symbol, BitOutputStream& out) const {
  *  tree, and initialize root pointer and leaves vector.
  */
 byte HCTree::decode(BitInputStream& in) const {
-    return 0;  // TODO (final)
+
+	HCNode * top = root;
+
+	/* while there are bits to read, go down tree */
+	while(1)
+	{
+		//exits the loop if nullptr is reached
+		if(top->c0 == nullptr || top->c1 == nullptr)
+		{
+	   	    break;
+		}
+
+		//gets the next bit from the bitwise stream.
+		bool dir = in.readBit();
+
+		if(dir == EOF)
+		{
+		     break;
+		}
+
+		/* reads next 0/1 bit if and only if node is not a leaf yet */
+		if(dir == false  && top->c0 != nullptr){
+		    top = top->c0;
+		}
+		else if(dir  == true && top->c1 != nullptr){
+		    top = top->c1; 
+		}
+	}
+
+	return top->symbol; 
 }
 
 /**
  * Print the contents of a tree
  */
 void HCTree::printTree() const {
-    cout << "=== PRINT TREE BEGIN ===" << endl;
-    printTreeHelper(root);
-    cout << "=== PRINT TREE END =====" << endl;
+	cout << "=== PRINT TREE BEGIN ===" << endl;
+	printTreeHelper(root);
+	cout << "=== PRINT TREE END =====" << endl;
 }
 
 /**
  * Recursive helper function for printTree
  */
 void HCTree::printTreeHelper(HCNode * node, string indent) const {
-    if (node == nullptr) {
-        cout << indent << "nullptr" << endl;
-        return;
-    }
+	if (node == nullptr) {
+		cout << indent << "nullptr" << endl;
+		return;
+	}
 
-    cout << indent << *node << endl;
-    if (node->c0 != nullptr || node->c1 != nullptr) {
-        printTreeHelper(node->c0, indent + "  ");
-        printTreeHelper(node->c1, indent + "  ");
-    }
+	cout << indent << *node << endl;
+	if (node->c0 != nullptr || node->c1 != nullptr) {
+		printTreeHelper(node->c0, indent + "  ");
+		printTreeHelper(node->c1, indent + "  ");
+	}
 }
- 
+
 void HCTree::deleteAll(HCNode * n)
 {
 	if(!n)
 	{
-	    return; 
+		return; 
 	}
 	deleteAll(n->c0);
 	deleteAll(n->c1);
-    
+
 	delete n;
 	return;
 }

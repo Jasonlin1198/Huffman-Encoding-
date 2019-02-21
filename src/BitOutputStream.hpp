@@ -7,7 +7,10 @@ using namespace std;
 
 class BitOutputStream {
 private:
-    ostream & out;
+    
+    unsigned char buf;
+    int nbits;
+    ostream & stream;
 
 public:
     BitOutputStream(ostream & o);

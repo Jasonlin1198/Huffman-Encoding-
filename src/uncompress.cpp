@@ -24,8 +24,8 @@ void print_usage(char ** argv) {
  */
 void uncompressAscii(const string & infile, const string & outfile) {
     HCTree tree;
-	ifstream theFile;
-	int nextChar;
+    ifstream theFile;
+    int nextChar;
     theFile.open(infile, ios::binary);
 
     /* holds all counts of symbols to pass in for build */
@@ -70,7 +70,51 @@ void uncompressAscii(const string & infile, const string & outfile) {
  * Uses bitwise I/O.
  */
 void uncompressBitwise(const string & infile, const string & outfile) {
-    // TODO (final)
+    HCTree tree;
+    ifstream theFile;
+    theFile.open(infile, ios::binary);
+
+    /* holds all counts of symbols to pass in for build */
+    vector<int> freqs (256, 0);
+
+    // hold 4 bytes which is the value of the frequecy of symbols 
+    int readN; 
+    int numberOfCharsRead;
+
+    // reads 1024 total bytes: loops 256 * 4 bytes per read
+    for(unsigned int x = 0; x < freqs.size() ; x++){
+        theFile.read( (char*)&readN, sizeof(readN) ); 
+    
+	//fills in freq vector with successive 4 bytes from compressed infile 
+	freqs[x] = readN;
+
+        //tracks how many characters were in the file based on header 
+        numberOfCharsRead += freqs[x];  
+    }
+
+    //builds huffman tree
+    tree.build(freqs);
+
+    // opens output file 
+    ofstream numFile;
+    numFile.open(outfile, ios::binary);
+
+    //creates a bitwise buffer stream 
+    BitInputStream input = BitInputStream(theFile);
+
+    int index = 0;
+
+    //decodes only for exactly the number of symbols in the original file 
+    while(index < numberOfCharsRead ) {
+
+        numFile << (unsigned char)tree.decode(input);	
+
+	index++;
+    }
+
+    theFile.close();
+    numFile.close();
+
     cerr << "TODO: uncompress '" << infile << "' -> '"
         << outfile << "' here (bitwise)" << endl;
 }

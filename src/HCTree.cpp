@@ -20,7 +20,7 @@ HCTree::~HCTree()
 void HCTree::build(const vector<int>& freqs)
 {
     /* if tree is non-empty */
-    if(!root)
+    if(root)
 	{
 		delete(root);
     }
@@ -41,9 +41,9 @@ void HCTree::build(const vector<int>& freqs)
 
     HCNode* add1;
     HCNode* add2;
-    int sum = 0;
-	
 	HCNode * parental;
+    int sum = 0;
+
     /* loop to create tree */
     while(pq.size() > 1)
 	{
@@ -124,31 +124,27 @@ byte HCTree::decode(istream& in) const
     char nextChar;
 
     /* while there are bits to read, go down tree */
-    while(1)
+    while(top->c0 != nullptr || top->c1 != nullptr)
 	{
-		//exits the loop if nullptr is reached
-		if(top->c0 == nullptr || top->c1 == nullptr)
-		{
-			break;
-		}
-		
-		//gets the next bit from the input stream.
+		/* gets the next bit from the input stream */
         nextChar = in.get();
 		if(in.eof())
 		{
 			break;
 		}
-	
+
         /* reads next 0/1 bit if and only if node is not a leaf yet */
-        if(nextChar == '0' && top->c0 != nullptr){
+        if(nextChar == '0' && top->c0 != nullptr)
+		{
             top = top->c0;
 		}
-		else if(nextChar == '1' && top->c1 != nullptr){
+		else if(nextChar == '1' && top->c1 != nullptr)
+		{
 	    	top = top->c1; 
 		}
     }
 
-    return top->symbol; 
+    return top->symbol;
 }
 
 /** Write to the given BitOutputStream

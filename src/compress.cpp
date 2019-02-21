@@ -24,59 +24,49 @@ void print_usage(char ** argv)
  */
 void compressAscii(const string & infile, const string & outfile)
 {
-	HCTree tree;
-    ifstream theFile;
-    unsigned char nextChar;
-    theFile.open(infile, ios::binary);
+	HCTree tree; /* Huffman Tree */
+    ifstream theFile; /* Input filestream */
+    int nextByte; /* Stores the next byte to be read */
+    theFile.open(infile, ios::binary); /* opens input filestream */
     
     vector<int> freqs(256, 0);
 
     /* Reads in the input file and then updates the frequency of each symbol */
-    while(1)
+    while((nextByte = theFile.get()) != EOF)
 	{
-		theFile >> nextChar;
-        if(theFile.eof())
-		{
-			break;
-		}
-		/* increments index of symbol that was read */
-		freqs[nextChar]++;
+		/* increments the index of the symbol that was read */
+		freqs[nextByte]++;
     }
     
     /* build huffman tree with corresponding counts */ 
-    tree.build(freqs);        
+    tree.build(freqs);
 
     /* opens output file */
     ofstream numFile;
     numFile.open(outfile, ios::binary);
 
-    /* prints each count on new line */
-    for(unsigned int i = 0; i < freqs.size() ; i++)
+    /* creates the header by printing each count on a new line */
+    for(unsigned int i = 0; i < freqs.size(); i++)
 	{
-        numFile << freqs[i];
-		numFile << '\n';
+        numFile << freqs[i] << endl;
     }
 
-    /* reset reading input file back to start */ 
+    /* reset reading input file back to the start */ 
     theFile.clear();
     theFile.seekg(0, theFile.beg);
 
-    /* for each char, encode the symbol which prints to the same output stream*/
-    while(1)
+    /* for each character, encode the symbol and print it
+	 * to the same output stream */
+    while((nextByte = theFile.get()) != EOF)
 	{
-		nextChar = theFile.get();
-        if(theFile.eof())
-		{
-			break;
-		}
-        tree.encode(nextChar, numFile);
+        tree.encode(nextByte, numFile);
     }
 
     theFile.close();
     numFile.close();
 
     cerr << "TODO: compress '" << infile << "' -> '"
-        << outfile << "' here (ASCII)" << endl;
+         << outfile << "' here (ASCII)" << endl;
 }
 
 /**
@@ -84,13 +74,15 @@ void compressAscii(const string & infile, const string & outfile)
  * and produces a compressed version in outfile.
  * Uses bitwise I/O.
  */
-void compressBitwise(const string & infile, const string & outfile) {
+void compressBitwise(const string & infile, const string & outfile)
+{
     // TODO (final)
     cerr << "TODO: compress '" << infile << "' -> '"
         << outfile << "' here (bitwise)" << endl;
 }
 
-int main(int argc, char ** argv) {
+int main(int argc, char ** argv)
+{
     string infile = "";
     string outfile = "";
     bool bitwise = false;

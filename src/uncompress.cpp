@@ -43,6 +43,9 @@ void uncompressAscii(const string & infile, const string & outfile)
     /* build huffman tree from header info */
     tree.build(freqs);
 
+	/* gets rid of the last newline char in the header */
+	nextChar = theFile.get();
+
     /* opens output file */
     ofstream numFile;
     numFile.open(outfile, ios::binary);

@@ -86,8 +86,7 @@ void compressBitwise(const string & infile, const string & outfile)
     HCTree tree;
     ifstream theFile;
     theFile.open(infile, ios::binary);
-    unsigned char nextChar; 
-    int nextByte;
+    byte nextByte = 0;
     
     // checks if file exists 
     if(theFile.fail())
@@ -108,7 +107,7 @@ void compressBitwise(const string & infile, const string & outfile)
     else
 	{ 
         /* gets freq of symbols in file in vector */
-        while((nextByte = theFile.get()) != EOF)
+        while((nextByte = (byte)theFile.get()) != EOF)
 		{
 			/* increments index of symbol that was read */
 			freqs[nextByte]++;
@@ -139,12 +138,10 @@ void compressBitwise(const string & infile, const string & outfile)
     BitOutputStream stream = BitOutputStream(numFile);
 
     // reading raw data from a file
-    while((nextByte = theFile.get()) != EOF)
+    while((nextByte = (byte)theFile.get()) != EOF)
 	{
-		nextChar = (unsigned char)nextByte;
-
 		//takes byte, puts in bitwise buffer and prints to ostream when full
-        tree.encode(nextChar, stream);
+        tree.encode(nextByte, stream);
 
     }
 

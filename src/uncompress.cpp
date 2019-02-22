@@ -92,7 +92,8 @@ void uncompressAscii(const string & infile, const string & outfile)
  * and produces an uncompressed version in outfile.
  * Uses bitwise I/O.
  */
-void uncompressBitwise(const string & infile, const string & outfile) {
+void uncompressBitwise(const string & infile, const string & outfile)
+{
     HCTree tree;
     ifstream theFile;
     theFile.open(infile, ios::binary);
@@ -101,18 +102,15 @@ void uncompressBitwise(const string & infile, const string & outfile) {
     vector<int> freqs (256, 0);
 
     // hold 4 bytes which is the value of the frequecy of symbols 
-    int readN; 
-    int numberOfCharsRead;
+    int readN = 0;
 
     // reads 1024 total bytes: loops 256 * 4 bytes per read
-    for(unsigned int x = 0; x < freqs.size() ; x++){
-        theFile.read( (char*)&readN, sizeof(readN) ); 
+    for(unsigned int x = 0; x < freqs.size(); x++)
+	{
+        theFile.read( (char*)(&readN), sizeof(readN)); 
     
-	//fills in freq vector with successive 4 bytes from compressed infile 
-	freqs[x] = readN;
-
-        //tracks how many characters were in the file based on header 
-        numberOfCharsRead += freqs[x];  
+		//fills in freq vector with successive 4 bytes from compressed infile 
+		freqs[x] = readN;
     }
 
     //builds huffman tree
@@ -125,21 +123,44 @@ void uncompressBitwise(const string & infile, const string & outfile) {
     //creates a bitwise buffer stream 
     BitInputStream input = BitInputStream(theFile);
 
-    int index = 0;
+	/* counts how many elements appear at least once */
+	int numUnique = 0;
+	int index = 0;
+	for(unsigned int i = 0; i < freqs.size(); i++)
+	{
+		if(freqs[i] != 0)
+		{
+			numUnique++;
+			index = i;
+		}
+	}
 
-    //decodes only for exactly the number of symbols in the original file 
-    while(index < numberOfCharsRead ) {
+	/* if we only have one node in our tree */
+	if(numUnique == 1)
+	{
+		for(int i = 0; i < freqs[index]; i++)
+		{
+			numFile << (unsigned char)index;
+		}
+	}
 
-        numFile << (unsigned char)tree.decode(input);	
-
-	index++;
-    }
+	/* if we have multiple nodes in our tree */
+    if(numUnique > 1)
+	{
+   		while(!theFile.eof())
+		{
+			/* if we have already decoded the last letter, break the loop */
+			if(theFile.peek() == EOF)
+			{
+				break;
+			}
+			/* adds symbol to output file */
+        	numFile << (unsigned char)tree.decode(input);
+		}
+	}
 
     theFile.close();
     numFile.close();
-
-    cerr << "TODO: uncompress '" << infile << "' -> '"
-        << outfile << "' here (bitwise)" << endl;
 }
 
 int main(int argc, char ** argv)

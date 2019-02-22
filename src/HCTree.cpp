@@ -210,7 +210,7 @@ byte HCTree::decode(BitInputStream& in) const {
 		}
 
 		/* reads next 0/1 bit if and only if node is not a leaf yet */
-		if(dir == false  && top->c0 != nullptr){
+		if(dir == false && top->c0 != nullptr){
 			top = top->c0;
 		}
 		else if(dir  == true && top->c1 != nullptr){

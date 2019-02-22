@@ -3,14 +3,17 @@
 
 BitOutputStream::BitOutputStream(ostream & o) : stream(o), buf(0), nbits(0) {}
 
-void BitOutputStream::writeBit(bool bit) {
+void BitOutputStream::writeBit(bool bit)
+{
 	//flush the bitwise buffer if it is full
-	if(nbits == 8 ) {
+	if(nbits == 8)
+	{
 	    flush();
 	}
 
 	//shifts bits left one assuming there are 7 or less bits filled
 	buf = buf << 1;
+
 	//sets right most bit to be value of the bool bit
 	buf = buf | bit; 
 
@@ -18,9 +21,11 @@ void BitOutputStream::writeBit(bool bit) {
 	nbits++;
 }
 
-void BitOutputStream::flush() {
+void BitOutputStream::flush()
+{
 	//handle the case of not full
-	if( nbits != 8 && nbits != 0 ){
+	if(nbits != 8 && nbits != 0)
+	{
 		//shifts bits to rightmost with padded 0's
 		buf = buf << (8 - nbits); 
 	}
@@ -28,6 +33,7 @@ void BitOutputStream::flush() {
 
 	stream.put(buf); //write the bitwise buffer to the ostream 
 	stream.flush();
+
 	//resets buf and its counter when flushed
 	buf = 0;
 	nbits = 0;

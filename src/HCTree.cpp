@@ -121,7 +121,7 @@ void HCTree::encode(byte symbol, ostream& out) const
 byte HCTree::decode(istream& in) const
 {
 	HCNode * top = root;
-	char nextChar;
+	char nextChar = '.';
 
 	/* while there are bits to read, go down tree */
 	while(top->c0 != nullptr || top->c1 != nullptr)
@@ -191,7 +191,7 @@ void HCTree::encode(byte symbol, BitOutputStream& out) const {
 byte HCTree::decode(BitInputStream& in) const {
 
 	HCNode * top = root;
-	int nextChar;
+	int nextChar = 0;
 
 	/* while there are bits to read, go down tree */
 	while(top->c0 != nullptr || top->c1 != nullptr)

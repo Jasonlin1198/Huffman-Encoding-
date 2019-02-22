@@ -103,12 +103,12 @@ void uncompressBitwise(const string & infile, const string & outfile)
 
     // hold 4 bytes which is the value of the frequecy of symbols 
     int readN = 0;
-	int numberOfCharsRead;
+	int numberOfCharsRead = 0;
 
     // reads 1024 total bytes: loops 256 * 4 bytes per read
     for(unsigned int x = 0; x < freqs.size(); x++)
 	{
-        theFile.read( (char*)(&readN), sizeof(readN)); 
+        theFile.read( (char*)(&readN), sizeof(readN) ); 
     
 		//fills in freq vector with successive 4 bytes from compressed infile 
 		freqs[x] = readN;

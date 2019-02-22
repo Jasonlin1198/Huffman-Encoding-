@@ -157,7 +157,7 @@ void uncompressBitwise(const string & infile, const string & outfile)
 		while(count < numberOfCharsRead)
 		{
 			numFile << (unsigned char)tree.decode(input);
-			index++;
+			count++;
 		}
 	}
 

@@ -103,6 +103,7 @@ void uncompressBitwise(const string & infile, const string & outfile)
 
     // hold 4 bytes which is the value of the frequecy of symbols 
     int readN = 0;
+	int numberOfCharsRead;
 
     // reads 1024 total bytes: loops 256 * 4 bytes per read
     for(unsigned int x = 0; x < freqs.size(); x++)
@@ -111,6 +112,9 @@ void uncompressBitwise(const string & infile, const string & outfile)
     
 		//fills in freq vector with successive 4 bytes from compressed infile 
 		freqs[x] = readN;
+
+		//tracks how many characters were in the file based on the header
+		numberOfCharsRead += freqs[x];
     }
 
     //builds huffman tree
@@ -145,17 +149,15 @@ void uncompressBitwise(const string & infile, const string & outfile)
 	}
 
 	/* if we have multiple nodes in our tree */
+	int count = 0;
     if(numUnique > 1)
 	{
-   		while(!theFile.eof())
+		//decodes only for exactly the number of symbols
+		//in the original input file.
+		while(count < numberOfCharsRead)
 		{
-			/* if we have already decoded the last letter, break the loop */
-			if(theFile.peek() == EOF)
-			{
-				break;
-			}
-			/* adds symbol to output file */
-        	numFile << (unsigned char)tree.decode(input);
+			numFile << (unsigned char)tree.decode(input);
+			index++;
 		}
 	}
 

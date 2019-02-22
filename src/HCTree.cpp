@@ -97,7 +97,7 @@ void HCTree::encode(byte symbol, ostream& out) const
 		{
 			code.push(0);
 		}
-		else
+		else if(leaf->p->c1 == leaf)
 		{
 			code.push(1);
 		}
@@ -167,7 +167,7 @@ void HCTree::encode(byte symbol, BitOutputStream& out) const {
 		{
 			code.push(0);
 		}
-		else
+		else if(leaf->p->c1 == leaf)
 		{
 			code.push(1);
 		}
@@ -191,29 +191,21 @@ void HCTree::encode(byte symbol, BitOutputStream& out) const {
 byte HCTree::decode(BitInputStream& in) const {
 
 	HCNode * top = root;
+	int nextChar;
 
 	/* while there are bits to read, go down tree */
-	while(1)
+	while(top->c0 != nullptr || top->c1 != nullptr)
 	{
-		//exits the loop if nullptr is reached
-		if(top->c0 == nullptr || top->c1 == nullptr)
-		{
-			break;
-		}
-
 		//gets the next bit from the bitwise stream.
-		bool dir = in.readBit();
-
-		if(dir == EOF)
-		{
-			break;
-		}
+		nextChar = in.readBit();
 
 		/* reads next 0/1 bit if and only if node is not a leaf yet */
-		if(dir == false && top->c0 != nullptr){
+		if(nextChar == 0 && top->c0 != nullptr)
+		{
 			top = top->c0;
 		}
-		else if(dir  == true && top->c1 != nullptr){
+		else if(nextChar == 1 && top->c1 != nullptr)
+		{
 			top = top->c1; 
 		}
 	}

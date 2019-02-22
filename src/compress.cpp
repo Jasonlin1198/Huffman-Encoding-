@@ -107,7 +107,7 @@ void compressBitwise(const string & infile, const string & outfile)
     else
 	{ 
         /* gets freq of symbols in file in vector */
-        while(nextByte = (byte)theFile.get())
+        while( (nextByte = (byte)theFile.get()) )
 		{
 			/* terminates the loop if the end of file is reached */
 			if(theFile.eof())
@@ -144,7 +144,7 @@ void compressBitwise(const string & infile, const string & outfile)
     BitOutputStream stream = BitOutputStream(numFile);
 
     // reading raw data from a file
-    while(nextByte = (byte)theFile.get())
+    while( (nextByte = (byte)theFile.get()) )
 	{
 		/* terminates the loop if the end of file is reached */
 		if(theFile.eof())
